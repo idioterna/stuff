@@ -1,0 +1,3 @@
+google|http://www.google.com/|200|<!doctype html><html itemscope="itemscope" itemtype="http://schema.org/WebPage">|1|2
+refused|http://127.0.0.1:1/|200|nothing|3|5
+network|http://255.0.0.0/|200|nothing|3|5
