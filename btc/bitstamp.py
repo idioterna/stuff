@@ -211,8 +211,8 @@ class BitStamp:
 			price - price
 			amount - amount
 		"""
-		amount = str(Decimal(amount).quantize(Decimal('0.00000001')))[:17]
-		price = str(Decimal(price).quantize(Decimal('0.01')))
+		amount = str(Decimal(amount).quantize(Decimal('0.00000001')))[:17] # bitstamp barfs with too many digits
+		price = str(Decimal(price).quantize(Decimal('0.01'))) # and loves cents
 		return self.generic_post('buy', user=self.user, password=self.password, amount=amount, price=price)
 
 	def sell(self, amount, price):
