@@ -4,12 +4,14 @@ Linux input and pulseaudio based push to talk daemon.
 
 Classes:
 
-PACMD - implements pulseaudio interaction through the
-    pacmd command interface
+Flag - Boolean flag used to store state.
 
-IEV - implements a parser for /dev/input/eventX interfaces
+PACMD - Implements pulseaudio interaction through the
+    pacmd command interface.
 
-PTT - tracks key positions and adjusts source volume
+IEV - Implements a parser for /dev/input/eventX interfaces.
+
+PTT - Tracks state of keyboard and adjusts source volume.
 
 """
 import collections
@@ -69,7 +71,9 @@ class Flag:
         self.value = not self.value
 
 class PACMD:
-    """runs pacmd and sends commands to it"""
+    """
+    Runs pacmd and sends commands to it.
+    """
     def __init__(self, devices, pauser=None):
         self.devices = devices
         self.pauser = pauser
@@ -190,7 +194,10 @@ class PTT:
         self.state = PTTState(keys=dict(), ptt=Flag(), voice=Flag())
 
     def keys_down(self, *codes):
-        """true if keys with codes are down, false otherwise"""
+        """
+        Returns true if keys with specified codes
+        are down, false otherwise.
+        """
         for code in codes:
             if not self.state.keys.get(code):
                 return False
@@ -198,8 +205,10 @@ class PTT:
 
     # process state based on current event
     def process(self, event, pacmd):
-        """process key combinations, update state and call volume
-           adjustment as neccessary"""
+        """
+        Process key combinations, update state
+        and call volume adjustment as neccessary.
+        """
         if self.settings.verbose:
             print("Event: {}".format(event))
         if event.ev_value == 1 and self.keys_down(*self.settings.toggle_combination):
@@ -227,7 +236,9 @@ class PTT:
             self.state.ptt.switch_off()
 
     def run(self):
-        """main event loop"""
+        """
+        Main event loop.
+        """
 
         # set up queue
         event_queue = queue.Queue()
@@ -343,7 +354,7 @@ def main(args):
 
 def usage():
     """
-    Usage instructions.
+    Instructions for use.
     """
     print("""Usage: {}
     <-i eventX> [-i eventY] ...
