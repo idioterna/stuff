@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+USERNAME='jype'
+PASSWORD='easy'
+
 import requests, bs4, random, time, httplib
 
 class Gun:
@@ -47,8 +50,7 @@ class TerminateWithExtremePrejudice:
     _guns = []
 
     def __init__(self, guns, nazis):
-        for l in guns:
-            u, p = l.strip().split()
+        for u, p in guns:
             self._guns.append(Gun(u, p))
 
         self._nazilist = [nazi.strip() for nazi in nazis]
@@ -78,10 +80,21 @@ class TerminateWithExtremePrejudice:
 
 if __name__ == '__main__':
     import sys
-    afa = TerminateWithExtremePrejudice(
-            open(sys.argv[1]), # whitespace separated user/pass per line
-            open(sys.argv[2]), # "latest posts by user" url per line
-            )
+
+    credentials = []
+    nazis = []
+    for i in range(len(sys.argv)):
+        if '-g' == sys.argv[i]:
+            u, p = sys.argv[i+1].split('=', 1)
+            credentials.append((u, p))
+        if '-n' == sys.argv[i]:
+            nazis.append([x.strip() for x in open(sys.argv[i+1]).readlines()])
+    if not credentials:
+        credentials = [(USERNAME, PASSWORD)]
+    if not nazis:
+        nazis = filter(lambda x:x, requests.get('https://bou.si/rest/nazis').text.split('\n'))
+
+    afa = TerminateWithExtremePrejudice(credentials, nazis)
     afa.load()
     afa.fire()
 
