@@ -2,8 +2,8 @@
 
 # pip install requests
 # pip install bs4
+# pip install lxml
 # ./antifartillery.py -g username=password
-# ./antifartillery.py -g username=password -n nazilist.txt
 
 USERNAME='jype'
 PASSWORD='easy'
