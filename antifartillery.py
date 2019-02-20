@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+# https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Woody_Guthrie_2.jpg/610px-Woody_Guthrie_2.jpg
 # pip install requests
 # pip install bs4
 # pip install lxml
 # ./antifartillery.py -g username=password
+# 0 * * * *   python antifartillery.py -r -g username=password
 
+# if you fill these out you should chmod 700
 USERNAME='jype'
 PASSWORD='easy'
 
@@ -14,8 +17,9 @@ class Gun:
     _epoch = 0
     _session = None
 
-    def __init__(self, u, p):
+    def __init__(self, u, p, pretend=True):
         self._epoch = int(1000*time.time())
+        self._pretend = pretend
         self.login(u, p)
 
     def login(self, u, p):
@@ -41,6 +45,8 @@ class Gun:
         return self._session.get(url)
 
     def fire(self, nazipost):
+        if self._pretend:
+            time.sleep(random.randint(3, 10))
         return self.load("%s&_=%s" % (nazipost, self.epoch()))
 
     def epoch(self):
@@ -54,9 +60,9 @@ class TerminateWithExtremePrejudice:
     _nazinames = {}
     _guns = []
 
-    def __init__(self, guns, nazis):
+    def __init__(self, guns, nazis, pretend):
         for u, p in guns:
-            self._guns.append(Gun(u, p))
+            self._guns.append(Gun(u, p, pretend))
 
         self._nazilist = [nazi.strip() for nazi in nazis]
 
@@ -81,25 +87,28 @@ class TerminateWithExtremePrejudice:
                 random.shuffle(self._guns)
                 for gun in self._guns[:3]:
                     r = gun.fire(np)
-                    print(self.naziname(nazi), gun.name(), r.status_code, r.reason)
 
 if __name__ == '__main__':
     import sys
 
     credentials = []
     nazis = []
+    pretend = False
     for i in range(len(sys.argv)):
         if '-g' == sys.argv[i]:
             u, p = sys.argv[i+1].split('=', 1)
             credentials.append((u, p))
         if '-n' == sys.argv[i]:
             nazis.append([x.strip() for x in open(sys.argv[i+1]).readlines()])
+        if '-r' == sys.argv[i]:
+            time.sleep(random.randint(1,3600))
+            pretend = True
     if not credentials:
         credentials = [(USERNAME, PASSWORD)]
     if not nazis:
         nazis = filter(lambda x:x, requests.get('https://bou.si/rest/nazis').text.split('\n'))
 
-    afa = TerminateWithExtremePrejudice(credentials, nazis)
+    afa = TerminateWithExtremePrejudice(credentials, nazis, pretend)
     afa.load()
     afa.fire()
 
