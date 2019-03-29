@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# use: stuserposts.py username password https://slo-tech.com/forum/c1
+# use: stuserposts.py username password https://slo-tech.com/forum/c1 > file.html
 
 import requests, bs4, random, time, httplib, logging, sys, re
 
